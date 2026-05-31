@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Panel By SD Team</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --bg-color: #050505;
+            --panel-bg: rgba(10, 15, 30, 0.6);
+            --glass-border: rgba(0, 230, 255, 0.2);
+            --text-main: #e0e0e0;
+            --hacker-green: #00ff41;
+            --hacker-blue: #00e6ff;
+            --error-red: #ff3333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(rgba(0, 230, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 230, 255, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        header h1 {
+            color: var(--hacker-blue);
+            font-size: 28px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(0, 230, 255, 0.5);
+        }
+
+        header h3 {
+            color: var(--hacker-green);
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            margin: auto;
+        }
+
+        .glass-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 30px 20px;
+            box-shadow: 0 0 20px rgba(0, 230, 255, 0.1);
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            text-align: center;
+        }
+
+        .glass-panel.active {
+            display: block;
+            opacity: 1;
+        }
+
+        h2 {
+            font-size: 18px;
+            margin-bottom: 25px;
+            color: var(--text-main);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            color: var(--hacker-green);
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--hacker-blue);
+            box-shadow: 0 0 8px rgba(0, 230, 255, 0.4);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--hacker-blue);
+            color: var(--hacker-blue);
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: var(--hacker-blue);
+            color: #000;
+            box-shadow: 0 0 15px var(--hacker-blue);
+        }
+
+        .error-msg {
+            color: var(--error-red);
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .note-box {
+            border: 1px dashed var(--hacker-green);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            background: rgba(0, 255, 65, 0.05);
+            font-size: 14px;
+        }
+
+        /* Loading Screen Styles */
+        #loading-screen {
+            height: 60vh;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #loading-screen.active {
+            display: flex;
+        }
+
+        .percentage {
+            font-size: 48px;
+            color: var(--hacker-blue);
+            text-shadow: 0 0 15px var(--hacker-blue);
+            margin-bottom: 20px;
+        }
+
+        .code-stream {
+            font-size: 12px;
+            color: var(--hacker-green);
+            text-align: left;
+            width: 100%;
+            height: 100px;
+            overflow: hidden;
+            opacity: 0.7;
+        }
+
+        /* Final Alert Popup */
+        #final-alert {
+            border: 2px solid var(--error-red);
+            box-shadow: 0 0 30px rgba(255, 51, 51, 0.3);
+        }
+
+        #final-alert h2 {
+            color: var(--error-red);
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            width: 100%;
+            padding-bottom: 20px;
+        }
+
+        footer span {
+            color: var(--hacker-blue);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            header h1 { font-size: 22px; }
+            .glass-panel { padding: 20px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>TikTok Panel By SD Team</h1>
+        <h3>T1kT0k Checker</h3>
+    </header>
+
+    <div class="container">
+        
+        <!-- Page 1: Initial Setup -->
+        <div id="page1" class="glass-panel active">
+            <h2>System Initialization</h2>
+            <div class="input-group">
+                <input type="text" id="p1-name" placeholder="Put Your Name" required>
+            </div>
+            <div class="input-group">
+                <input type="email" id="p1-gmail" placeholder="Put Your Gmail" required>
+            </div>
+            <button onclick="verifyPage1()">Verify</button>
+            <div id="err-p1" class="error-msg">Please fill both fields correctly.</div>
+        </div>
+
+        <!-- Page 2: Unlock Password -->
+        <div id="page2" class="glass-panel">
+            <h2>Please Provide Unlock Password</h2>
+            <div class="input-group">
+                <input type="password" id="p2-pass" placeholder="Enter Password">
+            </div>
+            <button onclick="verifyPage2()">Next</button>
+            <div id="err-p2" class="error-msg">Access Denied. Incorrect Password.</div>
+        </div>
+
+        <!-- Page 3: Security Password -->
+        <div id="page3" class="glass-panel">
+            <h2>Please Provide Security Password</h2>
+            <div class="input-group">
+                <input type="password" id="p3-pass" placeholder="Enter Password">
+            </div>
+            <button onclick="verifyPage3()">Next</button>
+            <div id="err-p3" class="error-msg">Access Denied. Incorrect Password.</div>
+        </div>
+
+        <!-- Page 4: Host Password -->
+        <div id="page4" class="glass-panel">
+            <h2>Please Provide Host Password</h2>
+            <div class="input-group">
+                <input type="password" id="p4-pass" placeholder="Enter Password">
+            </div>
+            <button onclick="verifyPage4()">Login to Dashboard</button>
+            <div id="err-p4" class="error-msg">Access Denied. Incorrect Host Password.</div>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div id="dashboard" class="glass-panel">
+            <h2>T1kT0k Checker</h2>
+            <div class="note-box">
+                Appreciation for:<br>
+                <strong>Ethical Hacker SD Bhai and SDevAI Team</strong>
+            </div>
+            <div class="input-group">
+                <input type="text" id="target-link" placeholder="Provide your TikTok Account Profile Link">
+            </div>
+            <button onclick="startChecker()">Verify Account</button>
+            <div id="err-dash" class="error-msg">Please provide a valid link.</div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loading-screen" class="glass-panel">
+            <div class="percentage" id="percent-text">0%</div>
+            <h3 style="color:var(--text-main); margin-bottom: 15px;">Extracting Data...</h3>
+            <div class="code-stream" id="code-stream"></div>
+        </div>
+
+        <!-- Final Alert Screen -->
+        <div id="final-alert" class="glass-panel">
+            <h2>SYSTEM ALERT</h2>
+            <p style="line-height: 1.6; font-size: 16px;">
+                Your Mobile Version Doesn't Support This Panel. Please Update Your Version And Come Back. Thank You.
+            </p>
+        </div>
+
+    </div>
+
+    <footer>
+        Support Team: <span>SDevAI Official Team</span><br>
+        Email: <span>sdofficalteam@gmail.com</span>
+    </footer>
+
+    <script>
+        // Navigation Function
+        function showPanel(id) {
+            document.querySelectorAll('.glass-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.getElementById(id).classList.add('active');
+        }
+
+        // Page 1 Logic
+        function verifyPage1() {
+            const name = document.getElementById('p1-name').value;
+            const gmail = document.getElementById('p1-gmail').value;
+            if (name.trim() === "" || gmail.trim() === "") {
+                document.getElementById('err-p1').style.display = 'block';
+            } else {
+                document.getElementById('err-p1').style.display = 'none';
+                showPanel('page2');
+            }
+        }
+
+        // Page 2 Logic
+        function verifyPage2() {
+            const pass = document.getElementById('p2-pass').value;
+            if (pass === "SD2026") {
+                document.getElementById('err-p2').style.display = 'none';
+                showPanel('page3');
+            } else {
+                document.getElementById('err-p2').style.display = 'block';
+            }
+        }
+
+        // Page 3 Logic
+        function verifyPage3() {
+            const pass = document.getElementById('p3-pass').value;
+            if (pass === "SDBHAI2026") {
+                document.getElementById('err-p3').style.display = 'none';
+                showPanel('page4');
+            } else {
+                document.getElementById('err-p3').style.display = 'block';
+            }
+        }
+
+        // Page 4 Logic
+        function verifyPage4() {
+            const pass = document.getElementById('p4-pass').value;
+            if (pass === "0312714608888064172130") {
+                document.getElementById('err-p4').style.display = 'none';
+                showPanel('dashboard');
+            } else {
+                document.getElementById('err-p4').style.display = 'block';
+            }
+        }
+
+        // Dashboard & Loading Logic
+        function startChecker() {
+            const link = document.getElementById('target-link').value;
+            if (link.trim() === "") {
+                document.getElementById('err-dash').style.display = 'block';
+                return;
+            }
+            
+            document.getElementById('err-dash').style.display = 'none';
+            showPanel('loading-screen');
+
+            let progress = 0;
+            const percentText = document.getElementById('percent-text');
+            const codeStream = document.getElementById('code-stream');
+            
+            // 60 seconds timer (60,000ms / 100 steps = 600ms per 1%)
+            const interval = setInterval(() => {
+                progress += 1;
+                percentText.innerText = progress + '%';
+
+                // Add fake hacker code stream
+                const randomHex = Math.floor(Math.random()*16777215).toString(16);
+                codeStream.innerHTML = `[+] Bypassing firewall... 0x${randomHex}<br>` + codeStream.innerHTML;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        showPanel('final-alert');
+                    }, 1000);
+                }
+            }, 600); // 600ms for 60-second total loading time
+        }
+    </script>
+</body>
+</html>
